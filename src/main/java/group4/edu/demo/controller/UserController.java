@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
 @Controller
 public class UserController {
     @Autowired
@@ -35,9 +37,16 @@ public class UserController {
 //        return "userDetails";
 //    }
     @PostMapping("/addUser")
-    public void saveUser(@ModelAttribute("user") UserDemo user) {
+    public String saveUser(@ModelAttribute("user") UserDemo user) {
         System.out.println("firstName: " + user.getFirstName());
         System.out.println("lastName: " + user.getLastName());
         userService.saveOrUpdate(user);
+        return "redirect:/all";
+    }
+    @GetMapping("/all")
+    public String getAllUsers(Model model) {
+        List<UserDemo> users = userService.getAllUsers();
+        model.addAttribute("users", users);
+        return "getAll";
     }
 }
