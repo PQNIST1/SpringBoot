@@ -19,5 +19,9 @@ public class UserDemo {
 
     @Column(name = "last_name")
     private String lastName;
+
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
 }
 
