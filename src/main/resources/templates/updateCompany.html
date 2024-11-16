@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Cập Nhật Công Ty</title>
+</head>
+<body>
+<h1>Cập Nhật Công Ty</h1>
+<form th:action="@{/companies/update}" th:object="${company}" method="post">
+  <input type="hidden" th:field="*{id}" />
+  <label for="name">Tên công ty:</label>
+  <input type="text" id="name" th:field="*{name}" />
+
+  <button type="submit">Cập Nhật Công Ty</button>
+</form>
+</body>
+</html>
