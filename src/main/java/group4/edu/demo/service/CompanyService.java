@@ -26,7 +26,16 @@ public class CompanyService {
 
     // Xóa công ty theo ID
     public void deleteCompany(Integer id) {
-        companyRepository.deleteById(id);
+        // Tìm công ty theo id
+        Company company = companyRepository.findById(id).orElseThrow(() -> new RuntimeException("Company not found"));
+
+        // Xóa mối quan hệ giữa công ty và người dùng
+        for (UserDemo user : company.getUsers()) {
+            user.setCompany(null); // Tách mối quan hệ giữa User và Company
+        }
+
+        // Sau đó mới xóa công ty
+        companyRepository.delete(company);
     }
 
     @Transactional

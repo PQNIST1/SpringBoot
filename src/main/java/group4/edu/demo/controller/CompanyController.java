@@ -24,14 +24,14 @@ public class CompanyController {
     public String getAllCompanies(Model model) {
         List<Company> companies = companyService.getAllCompanies();
         model.addAttribute("companies", companies);
-        return "getCompany";
+        return "companies";
     }
 
     @GetMapping("/add")
     public String addCompanyForm(Model model) {
         model.addAttribute("company", new Company());
         model.addAttribute("users", userService.getAllUsers()); // Lấy danh sách người dùng
-        return "insertCompany";
+        return "addCompany";
     }
 
     @PostMapping("/add")
@@ -45,7 +45,7 @@ public class CompanyController {
         Company company = companyService.getCompanyById(id);
         model.addAttribute("company", company);
         model.addAttribute("users", userService.getAllUsers()); // Lấy danh sách người dùng
-        return "updateCompany"; // Sửa lỗi chính tả
+        return "editCompany"; // Sửa lỗi chính tả
     }
 
     @PostMapping("/update")

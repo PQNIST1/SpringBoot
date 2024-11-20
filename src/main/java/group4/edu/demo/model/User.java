@@ -12,6 +12,7 @@ public class User {
 
     private String firstName;
     private String lastName;
+    private String password;
 
     public Long getId() {
         return id;
@@ -35,5 +36,13 @@ public class User {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

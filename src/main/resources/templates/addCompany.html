@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+<div class="flex items-center justify-center p-12">
+  <!-- Author: FormBold Team -->
+  <div class="mx-auto w-full max-w-[550px] bg-white">
+    <form th:action="@{/companies/add}" th:object="${company}" method="post">
+      <div class="mb-5">
+        <label for="name" class="mb-3 block text-base font-medium text-[#07074D]">
+          Company Name
+        </label>
+        <input th:field="*{name}" type="text" name="name" id="name" placeholder="Full Name"
+               class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+      </div>
+      <div class="mb-5">
+        <h3>User List</h3>
+        <div th:each="user : ${users}">
+          <input type="checkbox" th:field="*{users}" th:value="${user.id}" />
+          <label th:text="${user.firstName + ' ' + user.lastName}"></label><br>
+        </div>
+      </div>
+      <div>
+        <button type= submit
+                class="hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none">
+          Add
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+</body>

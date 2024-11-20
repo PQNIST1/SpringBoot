@@ -20,8 +20,17 @@ public class UserDemo {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "password")
+    private String password;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
+
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
+
+
 }
 
