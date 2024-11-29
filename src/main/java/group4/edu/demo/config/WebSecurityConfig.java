@@ -21,7 +21,7 @@ public class WebSecurityConfig {
     protected UserDetailsService userDetailsService() {
         UserDetails user = User.builder()
                 .username("user")
-                .password(passwordEncoder().encode("password"))
+                .password(passwordEncoder().encode("1234"))
                 .roles("USER", "ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(user);
@@ -43,9 +43,11 @@ public class WebSecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .defaultSuccessUrl("/addUser", true) // Thêm dòng này
                         .permitAll())
                 .logout(config -> config
                         .logoutSuccessUrl("/login"))
                 .build();
     }
+
 }
