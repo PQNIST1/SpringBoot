@@ -3,6 +3,7 @@ package group4.edu.demo.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -20,5 +21,6 @@ public class Role {
     private String name;
 
     @ManyToMany(mappedBy = "roles")
-    private Set<UserDemo> users;
+    private Set<UserDemo> users = new HashSet<>();
+
 }
