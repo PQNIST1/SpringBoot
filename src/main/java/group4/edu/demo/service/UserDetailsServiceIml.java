@@ -43,12 +43,10 @@ public class UserDetailsServiceIml implements UserDetailsService {
             System.out.println("No roles found for user: " + email);
         }
 
-        // Chuyển đổi roles thành GrantedAuthority
         List<GrantedAuthority> authorities = roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName())) // Nếu "ROLE_" đã có trong DB, không cần thêm nữa
                 .collect(Collectors.toList());
 
-        // Log kết quả
         System.out.println("Granted Authorities: " + authorities);
 
         return new org.springframework.security.core.userdetails.User(

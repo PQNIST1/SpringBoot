@@ -62,7 +62,7 @@ public class UserService {
             updatedUser.setEmail(userDetails.getEmail());
             updatedUser.setFirstName(userDetails.getFirstName());
             updatedUser.setLastName(userDetails.getLastName());
-            updatedUser.setPassword(userDetails.getPassword());
+            updatedUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
 
             return userRepository.save(updatedUser);
         }
