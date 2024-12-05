@@ -1,5 +1,9 @@
 package group4.edu.demo.controller;
 
+import group4.edu.demo.dto.CompanyDTO;
+import group4.edu.demo.dto.Convert;
+import group4.edu.demo.dto.UserDTO;
+import group4.edu.demo.model.Company;
 import group4.edu.demo.model.UserDemo;
 import group4.edu.demo.repository.UserRepository;
 import group4.edu.demo.service.UserService;
@@ -7,14 +11,14 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -29,23 +33,59 @@ public class RestUserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private Convert convert;
+
+    //GET ALL USER
     @GetMapping("/admin/users")
-    public ResponseEntity<?> getAllUSer(){
-        return new ResponseEntity<List<UserDemo>>(userService.getAllUsers(), HttpStatus.OK);
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        try {
+            List<UserDemo> users = userRepository.findAll();
+            List<UserDTO> userDTOs = users.stream()
+                    .map(convert::convertUserToDTO)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(userDTOs);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ArrayList<>());
+        }
     }
+
+    //GET USER BY ID
+    @GetMapping("/admin/user/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Integer id) {
+        try {
+            UserDemo user = userRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+
+            UserDTO userDTO = convert.convertUserToDTO(user);
+
+            return ResponseEntity.ok(userDTO);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error fetching user: " + e.getMessage());
+        }
+    }
+
+    //REGISTER
     @PostMapping("/register")
     public ResponseEntity<UserDemo> register(@RequestBody UserDemo request){
         return ResponseEntity.ok(userService.createUser(request));
     }
 
+    //UPDATE USER
     @PostMapping("/admin/update/{id}")
     public ResponseEntity<?> updateUser(@RequestBody UserDemo user, @PathVariable int id){
         return new ResponseEntity<UserDemo>(userService.updateUser(id, user), HttpStatus.OK);
     }
 
+    //DELETE USER
     @DeleteMapping("/admin/delete/{id}")
     @Transactional
-    public String deleteMessage(@PathVariable int id) throws IOException {
+    public String deleteUser(@PathVariable int id) throws IOException {
         Optional<UserDemo> user = userRepository.findById(id);
         if (user.isPresent()) {
             userRepository.deleteByUserId(id);

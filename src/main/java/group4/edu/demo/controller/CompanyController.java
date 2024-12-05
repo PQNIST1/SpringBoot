@@ -1,5 +1,6 @@
 package group4.edu.demo.controller;
 
+import group4.edu.demo.dto.CompanyDTO;
 import group4.edu.demo.model.Company;
 import group4.edu.demo.service.CompanyService;
 import group4.edu.demo.service.UserService;
@@ -22,7 +23,7 @@ public class CompanyController {
 
     @GetMapping("/all")
     public String getAllCompanies(Model model) {
-        List<Company> companies = companyService.getAllCompanies();
+        List<CompanyDTO> companies = companyService.getAllCompanies();
         model.addAttribute("companies", companies);
         return "companies";
     }

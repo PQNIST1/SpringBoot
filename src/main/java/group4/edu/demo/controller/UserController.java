@@ -68,16 +68,16 @@ public class UserController {
     }
 
     // Hiển thị form chỉnh sửa người dùng
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable("id") Integer id, Model model) {
-        UserDemo user = userService.getUserById(id).orElse(null);
-        if (user != null) {
-            model.addAttribute("user", user);
-            model.addAttribute("companies", userService.getAllCompanies());
-            return "editUser";
-        }
-        return "redirect:/users";
-    }
+//    @GetMapping("/edit/{id}")
+//    public String showEditForm(@PathVariable("id") Integer id, Model model) {
+//        UserDemo user = userService.getUserById(id).orElse(null);
+//        if (user != null) {
+//            model.addAttribute("user", user);
+//            model.addAttribute("companies", userService.getAllCompanies());
+//            return "editUser";
+//        }
+//        return "redirect:/users";
+//    }
 
     // Xử lý chỉnh sửa người dùng
     @PostMapping("/update/{id}")

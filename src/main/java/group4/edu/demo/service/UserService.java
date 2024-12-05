@@ -77,16 +77,5 @@ public class UserService {
         }
         return false;
     }
-
-
-    public List<Company> getAllCompanies() {
-        return companyRepository.findAll();
-    }
-    public Optional<Company> getCompanyById(Integer id) {
-        return companyRepository.findById(id);
-    }
-    public Company createCompany(Company company) {
-        return companyRepository.save(company);
-    }
 }
 
