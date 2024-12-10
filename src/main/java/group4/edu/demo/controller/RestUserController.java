@@ -3,9 +3,11 @@ package group4.edu.demo.controller;
 import group4.edu.demo.dto.CompanyDTO;
 import group4.edu.demo.dto.Convert;
 import group4.edu.demo.dto.UserDTO;
+import group4.edu.demo.model.Authen;
 import group4.edu.demo.model.Company;
 import group4.edu.demo.model.UserDemo;
 import group4.edu.demo.repository.UserRepository;
+import group4.edu.demo.service.AuthenticationService;
 import group4.edu.demo.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,9 @@ public class RestUserController {
     @Autowired
     private Convert convert;
 
+    @Autowired
+    private AuthenticationService authenticationService;
+
     //GET ALL USER
     @GetMapping("/admin/users")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
@@ -44,7 +49,6 @@ public class RestUserController {
             List<UserDTO> userDTOs = users.stream()
                     .map(convert::convertUserToDTO)
                     .collect(Collectors.toList());
-
             return ResponseEntity.ok(userDTOs);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -71,15 +75,26 @@ public class RestUserController {
     }
 
     //REGISTER
+//    @PostMapping("/register")
+//    public ResponseEntity<UserDemo> register(@RequestBody UserDemo request){
+//        return ResponseEntity.ok(userService.createUser(request));
+//    }
     @PostMapping("/register")
-    public ResponseEntity<UserDemo> register(@RequestBody UserDemo request){
-        return ResponseEntity.ok(userService.createUser(request));
+    public ResponseEntity<Authen> register(@RequestBody UserDemo request){
+        return ResponseEntity.ok(authenticationService.register(request));
+    }
+
+    //LOGIN
+    @PostMapping("/login")
+    public ResponseEntity<Authen> login(@RequestBody UserDemo request){
+        return ResponseEntity.ok(authenticationService.login(request));
     }
 
     //UPDATE USER
     @PostMapping("/admin/update/{id}")
-    public ResponseEntity<?> updateUser(@RequestBody UserDemo user, @PathVariable int id){
-        return new ResponseEntity<UserDemo>(userService.updateUser(id, user), HttpStatus.OK);
+    public ResponseEntity<String> updateUser(@RequestBody UserDemo user, @PathVariable int id) {
+        userService.updateUser(id, user);
+        return new ResponseEntity<>("Update Successfully", HttpStatus.OK);
     }
 
     //DELETE USER
