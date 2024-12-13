@@ -56,7 +56,6 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
-
         UserDemo user = repository.findByEmail(request.getEmail()).orElseThrow();
         String token = jwtService.generateToken(user);
         return new Authen(token);
