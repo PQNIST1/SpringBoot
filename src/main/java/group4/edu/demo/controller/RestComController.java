@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -32,6 +33,7 @@ public class RestComController {
 
     //GET ALL COMPANIES
     @GetMapping("/admin/companies")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<?> getAllCompanies() {
         List<CompanyDTO> companies = companyService.getAllCompanies();
         if (companies.isEmpty()) {
@@ -42,6 +44,7 @@ public class RestComController {
 
     //DELETE COMPANY
     @DeleteMapping("/admin/company/delete/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<?> deleteCompany(@PathVariable Integer id) {
         try {
             companyService.deleteCompany(id);
@@ -53,6 +56,7 @@ public class RestComController {
 
     //ADD COMPANY
     @PostMapping("/admin/company/add")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<?> saveOrUpdateCompany(@RequestBody CompanyDTO companyDTO) {
         try {
             Company company = convert.convertCompanyToEntity(companyDTO);
@@ -68,6 +72,7 @@ public class RestComController {
 
     //UPDATE COMPANY
     @PostMapping("/admin/company/edit/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<?> updateCompany(@PathVariable Integer id, @RequestBody CompanyDTO companyDTO) {
         try {
             Company company = companyService.getCompanyById(id);
@@ -97,6 +102,7 @@ public class RestComController {
 
     //GET COMPANY BY ID
     @GetMapping("/admin/company/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<?> getCompanyById(@PathVariable Integer id) {
         try {
             Company company = companyService.getCompanyById(id);

@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +44,7 @@ public class RestUserController {
 
     //GET ALL USER
     @GetMapping("/admin/users")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         try {
             List<UserDemo> users = userRepository.findAll();
@@ -58,6 +60,7 @@ public class RestUserController {
 
     //GET USER BY ID
     @GetMapping("/admin/user/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_ADMIN')")
     public ResponseEntity<?> getUserById(@PathVariable Integer id) {
         try {
             UserDemo user = userRepository.findById(id)
@@ -92,6 +95,7 @@ public class RestUserController {
 
     //UPDATE USER
     @PostMapping("/admin/update/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<String> updateUser(@RequestBody UserDemo user, @PathVariable int id) {
         userService.updateUser(id, user);
         return new ResponseEntity<>("Update Successfully", HttpStatus.OK);
@@ -99,6 +103,7 @@ public class RestUserController {
 
     //DELETE USER
     @DeleteMapping("/admin/delete/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @Transactional
     public String deleteUser(@PathVariable int id) throws IOException {
         Optional<UserDemo> user = userRepository.findById(id);

@@ -14,4 +14,5 @@ public interface RoleRepository extends JpaRepository<Role, Integer> {
     Set<Role> findByUsers_Id(Integer userId);
     @Query("SELECT r FROM Role r JOIN r.users u WHERE u.email = :email")
     List<Role> findRolesByEmail(@Param("email") String email);
+
 }

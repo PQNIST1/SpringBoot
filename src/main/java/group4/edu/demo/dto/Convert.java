@@ -64,7 +64,8 @@ public class Convert {
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),
-                companyName
+                companyName,
+                user.getRoles().stream().map(role -> role.getName()).toList()
         );
     }
 }
