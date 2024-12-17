@@ -1,10 +1,7 @@
 package group4.edu.demo.controller;
 
-import group4.edu.demo.dto.CompanyDTO;
-import group4.edu.demo.dto.Convert;
 import group4.edu.demo.dto.UserDTO;
 import group4.edu.demo.model.Authen;
-import group4.edu.demo.model.Company;
 import group4.edu.demo.model.UserDemo;
 import group4.edu.demo.repository.UserRepository;
 import group4.edu.demo.service.AuthenticationService;
@@ -18,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,52 +32,12 @@ public class RestUserController {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private Convert convert;
+
 
     @Autowired
     private AuthenticationService authenticationService;
 
-    //GET ALL USER
-    @GetMapping("/admin/users")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        try {
-            List<UserDemo> users = userRepository.findAll();
-            List<UserDTO> userDTOs = users.stream()
-                    .map(convert::convertUserToDTO)
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(userDTOs);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ArrayList<>());
-        }
-    }
 
-    //GET USER BY ID
-    @GetMapping("/admin/user/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_ADMIN')")
-    public ResponseEntity<?> getUserById(@PathVariable Integer id) {
-        try {
-            UserDemo user = userRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
-
-            UserDTO userDTO = convert.convertUserToDTO(user);
-
-            return ResponseEntity.ok(userDTO);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error fetching user: " + e.getMessage());
-        }
-    }
-
-    //REGISTER
-//    @PostMapping("/register")
-//    public ResponseEntity<UserDemo> register(@RequestBody UserDemo request){
-//        return ResponseEntity.ok(userService.createUser(request));
-//    }
     @PostMapping("/register")
     public ResponseEntity<Authen> register(@RequestBody UserDemo request){
         return ResponseEntity.ok(authenticationService.register(request));
@@ -93,19 +49,55 @@ public class RestUserController {
         return ResponseEntity.ok(authenticationService.login(request));
     }
 
-    //UPDATE USER
-    @PostMapping("/admin/update/{id}")
+
+    @GetMapping("user/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @GetMapping("/users")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public ResponseEntity<String> updateUser(@RequestBody UserDemo user, @PathVariable int id) {
-        userService.updateUser(id, user);
-        return new ResponseEntity<>("Update Successfully", HttpStatus.OK);
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    //ADD USER
+    @PostMapping("/admin/user/add")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<String> createUser(@RequestBody UserDemo user) {
+        try {
+            userService.createUser(user);  // Giả sử bạn có phương thức này trong service
+            return new ResponseEntity<>("User created successfully", HttpStatus.CREATED);  // Trả về thành công
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error creating user: " + e.getMessage(), HttpStatus.BAD_REQUEST);  // Trả về lỗi nếu có
+        }
+    }
+
+
+    //UPDATE USER
+    @PutMapping("/admin/update/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<String> updateUser(@PathVariable("id") Long id, @RequestBody UserDemo userDetails) {
+        try {
+            // Gọi phương thức updateUser trong service để cập nhật dữ liệu
+            UserDemo updatedUser = userService.updateUser(id, userDetails);
+
+            if (updatedUser != null) {
+                return new ResponseEntity<>("User updated successfully", HttpStatus.OK);  // Trả về thành công
+            } else {
+                return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);  // Nếu không tìm thấy người dùng
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error updating user: " + e.getMessage(), HttpStatus.BAD_REQUEST);  // Trả về lỗi nếu có
+        }
     }
 
     //DELETE USER
     @DeleteMapping("/admin/delete/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @Transactional
-    public String deleteUser(@PathVariable int id) throws IOException {
+    public String deleteUser(@PathVariable long id) throws IOException {
         Optional<UserDemo> user = userRepository.findById(id);
         if (user.isPresent()) {
             userRepository.deleteByUserId(id);
@@ -114,5 +106,20 @@ public class RestUserController {
         } else {
             return "User not found";
         }
+    }
+    // Get User no company
+    @GetMapping("/admin/users/no-company")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<List<UserDTO>> getUsersWithoutCompany() {
+        // Lấy danh sách các người dùng chưa có công ty
+        List<UserDemo> usersWithoutCompany = userRepository.findByCompanyIsNull();
+
+        // Chuyển đổi danh sách UserDemo sang UserDTO
+        List<UserDTO> userDTOs = usersWithoutCompany.stream()
+                .map(user -> new UserDTO(user))  // Sử dụng constructor UserDTO(UserDemo)
+                .collect(Collectors.toList());
+
+        // Trả về danh sách người dùng dưới dạng ResponseEntity
+        return new ResponseEntity<>(userDTOs, HttpStatus.OK);
     }
 }

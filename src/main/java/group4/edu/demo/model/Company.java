@@ -1,28 +1,40 @@
 package group4.edu.demo.model;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "COMPANY")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
-
-    @Column(name = "name")
+    private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "company", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
-    private List<UserDemo> users = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "company")
+    private Set<UserDemo> users;
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Set<UserDemo> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<UserDemo> users) {
+        this.users = users;
+    }
 }

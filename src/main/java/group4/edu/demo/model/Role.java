@@ -1,5 +1,6 @@
 package group4.edu.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,20 +8,37 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "ROLE")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
-
-    @Column(name = "name", nullable = false, unique = true)
+    private Long id;
     private String name;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "roles")
-    private Set<UserDemo> users = new HashSet<>();
+    private Set<UserDemo> users;
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Set<UserDemo> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<UserDemo> users) {
+        this.users = users;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
