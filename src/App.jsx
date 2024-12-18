@@ -1,34 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import Login from './components/login'
+import Register from './components/register'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import AddUser from './components/user_add';
+import AddCompany from './components/company_add';
+import CompanyDetail from './components/company_detail';
+import UserDetail from './components/user_detail';
+import UserProfile from './components/user_profile';
+import Home from './components/home';
+import Companies from './components/companies';
+import Modals from './components/modal';
+import ModalPopUp from './components/modal_popup';
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/add_user" element={<AddUser />} />
+        <Route path="/add_company" element={<AddCompany />} />
+        <Route path="/companies_detail" element={<CompanyDetail />} />
+        <Route path="/user_detail" element={<UserDetail />} />
+        <Route path="/user_profile" element={<UserProfile />} />
+        <Route path="/companies" element={<Companies />} />
+        <Route path="/modal" element={<Modals/>} />
+        <Route path="/modalpopup" element={<ModalPopUp/>} />
+
+      </Routes>
+    </Router>
   )
 }
 
