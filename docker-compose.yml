@@ -20,11 +20,7 @@ services:
       - app-network
     depends_on:
       - mysql
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/demo4
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: rootpassword
-      SPRING_JPA_HIBERNATE_DDL-AUTO: create
+
 
 networks:
   app-network:

@@ -60,36 +60,50 @@ public class UserService {
 
 
     // Cập nhật bất kỳ trường nào của user
-    public UserDemo updateUser(Long id, UserDemo userDetails) {
+    public UserDemo updateUser(Long id, UserDemo userDetails, Set<String> roleNames) {
         Optional<UserDemo> userOptional = userRepository.findById(id);
 
         if (userOptional.isPresent()) {
             UserDemo existingUser = userOptional.get();
 
-            // Cập nhật các trường chỉ khi giá trị khác với giá trị cũ
-            if (userDetails.getEmail() != null && !userDetails.getEmail().equals(existingUser.getEmail())) {
+            // Cập nhật thông tin cơ bản
+            if (userDetails.getEmail() != null) {
                 existingUser.setEmail(userDetails.getEmail());
             }
 
-            if (userDetails.getFirstName() != null && !userDetails.getFirstName().equals(existingUser.getFirstName())) {
+            if (userDetails.getFirstName() != null) {
                 existingUser.setFirstName(userDetails.getFirstName());
             }
 
-            if (userDetails.getLastName() != null && !userDetails.getLastName().equals(existingUser.getLastName())) {
+            if (userDetails.getLastName() != null) {
                 existingUser.setLastName(userDetails.getLastName());
             }
 
-            if (userDetails.getPassword() != null && !userDetails.getPassword().equals(existingUser.getPassword())) {
-                existingUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));  // Mã hóa lại mật khẩu
+            if (userDetails.getPassword() != null) {
+                existingUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+            }
+
+            // Cập nhật roles nếu roleNames được cung cấp
+            if (roleNames != null && !roleNames.isEmpty()) {
+                Set<Role> updatedRoles = roleNames.stream()
+                        .map(roleName -> roleRepository.findByName(roleName)
+                                .orElseGet(() -> {
+                                    Role newRole = new Role();
+                                    newRole.setName(roleName);
+                                    return roleRepository.save(newRole);
+                                }))
+                        .collect(Collectors.toSet());
+
+                existingUser.setRoles(updatedRoles);
             }
 
             // Lưu lại người dùng đã cập nhật
             return userRepository.save(existingUser);
         }
 
-        // Trả về null nếu không tìm thấy người dùng
-        return null;
+        throw new RuntimeException("User not found");
     }
+
 
     public boolean deleteUser(Long id) {
         if (userRepository.existsById(id)) {

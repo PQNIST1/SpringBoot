@@ -1,5 +1,6 @@
 package group4.edu.demo.controller;
 
+import group4.edu.demo.dto.UpdateDTO;
 import group4.edu.demo.dto.UserDTO;
 import group4.edu.demo.model.Authen;
 import group4.edu.demo.model.UserDemo;
@@ -78,29 +79,32 @@ public class RestUserController {
     //UPDATE USER
     @PutMapping("/admin/update/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public ResponseEntity<String> updateUser(@PathVariable("id") Long id, @RequestBody UserDemo userDetails) {
+    public ResponseEntity<String> updateUser(@PathVariable("id") Long id, @RequestBody UpdateDTO userUpdateRequest) {
         try {
-            // Gọi phương thức updateUser trong service để cập nhật dữ liệu
-            UserDemo updatedUser = userService.updateUser(id, userDetails);
+            // Tạo một UserDemo từ userUpdateRequest
+            UserDemo userDetails = new UserDemo();
+            userDetails.setEmail(userUpdateRequest.getEmail());
+            userDetails.setFirstName(userUpdateRequest.getFirstName());
+            userDetails.setLastName(userUpdateRequest.getLastName());
+            userDetails.setPassword(userUpdateRequest.getPassword());
 
-            if (updatedUser != null) {
-                return new ResponseEntity<>("User updated successfully", HttpStatus.OK);  // Trả về thành công
-            } else {
-                return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);  // Nếu không tìm thấy người dùng
-            }
+            // Gọi service để cập nhật user
+            UserDemo updatedUser = userService.updateUser(id, userDetails, userUpdateRequest.getRoles());
+
+            return new ResponseEntity<>("User updated successfully", HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("Error updating user: " + e.getMessage(), HttpStatus.BAD_REQUEST);  // Trả về lỗi nếu có
+            return new ResponseEntity<>("Error updating user: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
+
     //DELETE USER
-    @DeleteMapping("/admin/delete/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @Transactional
-    public String deleteUser(@PathVariable long id) throws IOException {
+    @DeleteMapping("/admin/delete/user/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    public String deleteUser(@PathVariable long id) {
         Optional<UserDemo> user = userRepository.findById(id);
         if (user.isPresent()) {
-            userRepository.deleteByUserId(id);
+//            userRepository.deleteByUserId(id);
             userRepository.deleteById(id);
             return "Delete Successfully";
         } else {

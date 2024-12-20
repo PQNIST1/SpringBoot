@@ -1,11 +1,13 @@
 package group4.edu.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import group4.edu.demo.repository.RoleRepository;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class UserDemo {
@@ -87,5 +89,7 @@ public class UserDemo {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
+
 }
 
