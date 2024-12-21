@@ -71,7 +71,7 @@ const Register = () => {
 
                 <div className="mt-4 text-center">
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Already have an account? </span>
-                    <Link href="/login" className="text-indigo-600 ">Login</Link>
+                    <Link to={"/login"} className="text-indigo-600 ">Login</Link>
                 </div>
             </div>
         </div>

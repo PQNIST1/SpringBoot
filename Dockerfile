@@ -1,29 +1,26 @@
-# Sử dụng image Node.js chính thức để build ứng dụng
+# Build Stage
 FROM node:18 AS build
-
-# Đặt thư mục làm việc trong container
 WORKDIR /app
 
-# Copy package.json và package-lock.json (hoặc yarn.lock) vào container
+# Copy package.json and install dependencies
 COPY package*.json ./
-
-# Cài đặt các dependencies
 RUN npm install
 
-# Copy toàn bộ mã nguồn vào container
+# Copy source code and build the app
 COPY . .
-
-# Build ứng dụng React
 RUN npm run build
 
-# Chuyển sang image Nginx để phục vụ ứng dụng
-FROM nginx:alpine
+# Run Stage with Nginx
+FROM nginx:1.23-alpine
 
-# Copy build folder từ container trước đó vào thư mục của Nginx
+# Copy the build files from the build stage to Nginx's html folder
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Mở cổng 80 cho ứng dụng
+# Copy the Nginx config file into the container
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 80 to access the app
 EXPOSE 80
 
-# Chạy Nginx
+# Start Nginx in the foreground
 CMD ["nginx", "-g", "daemon off;"]
